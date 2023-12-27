@@ -11,21 +11,31 @@ class GameState(State):
         self.height = height
         self.board_top = 0
         self.board_left = 0
-        self.is_game_over = False
-        self.valid_matches = 0
         self.bombs_number = bombs_number
 
-        self.left_flags = bombs_number
+        self.load_fonts()
 
-        self.game_board = Board(
-            self.board_left, self.board_top, self.width, self.height, bombs_number
-        )
+        self.init_game()
 
         screen = pygame.display.set_mode(
             (width * Cell.CELL_SIZE, height * Cell.CELL_SIZE)
         )
 
         super().__init__(screen)
+
+    def init_game(self):
+        self.game_board = Board(
+            self.board_left, self.board_top, self.width, self.height, self.bombs_number
+        )
+        self.is_win = False
+        self.valid_matches = 0
+        self.is_game_over = False
+        self.left_flags = self.bombs_number
+
+    def load_fonts(self):
+        pygame.font.init()
+        self.header_font = pygame.font.Font("./assets/m12.ttf", 31)
+        self.subheader_font = pygame.font.Font("./assets/m12.ttf", 16)
 
     def get_clicked_rect_index(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -45,9 +55,8 @@ class GameState(State):
             return
         selected_cell = self.game_board.board[cell_index]
 
-        if self.is_game_over:
+        if self.is_game_over or self.is_win:
             return
-
         if (
             selected_cell.type == CellType.CHECKED
             or selected_cell.type == CellType.FLAGGED
@@ -90,7 +99,7 @@ class GameState(State):
             selected_cell.type = CellType.UNCHECKED
             self.left_flags += 1
             if selected_cell.is_trap:
-                self.valid_matches-=1
+                self.valid_matches -= 1
         else:
             if self.left_flags == 0:
                 return
@@ -98,23 +107,55 @@ class GameState(State):
             selected_cell.type = CellType.FLAGGED
 
             if selected_cell.is_trap:
-                self.valid_matches+=1
-        self.check_win()
+                self.valid_matches += 1
 
-    def check_win(self):
-        if self.valid_matches == self.bombs_number:
-            print("wygrałeś")
+            if self.valid_matches == self.bombs_number:
+                self.is_win = True
 
+    def show_ending_msg(self, msg):
+        msg = msg.upper()
+        subheader_msgs = ["Press Space to play again", "or press Q to leave"]
+        header_surf = self.header_font.render(msg, True, (255, 255, 255))
+        text_rect = header_surf.get_rect(
+            center=(
+                self.screen.get_width() // 2,
+                self.screen.get_height() // 2 - header_surf.get_height() // 2,
+            )
+        )
+        self.screen.blit(header_surf, text_rect)
+
+        for idx, msg in enumerate(subheader_msgs):
+            msg_surf = self.subheader_font.render(msg, True, (255, 255, 255))
+            msg_rect = msg_surf.get_rect(
+                center=(
+                    self.screen.get_width() // 2,
+                    text_rect.y
+                    + 2 * text_rect.height
+                    + (msg_surf.get_height() + 5) * idx,
+                )
+            )
+            self.screen.blit(msg_surf, msg_rect)
 
     def handle_events(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and not (
+            self.is_win or self.is_game_over
+        ):
             if event.button == 1:
                 self.visit_cell(self.get_clicked_rect_index())
             if event.button == 3:
                 self.mark_cell(self.get_clicked_rect_index())
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and (self.is_win or self.is_game_over):
+                self.init_game()
+            elif event.key == pygame.K_q and (self.is_win or self.is_game_over):
+                self.end_state()
 
     def update(self):
         pass
 
     def render(self):
         self.game_board.draw_board(self.screen)
+        if self.is_win:
+            self.show_ending_msg("You have won")
+        if self.is_game_over:
+            self.show_ending_msg("You have lost")

@@ -33,7 +33,6 @@ class Board:
                 self.board.append(Cell(i))
 
     def load_assets(self):
-        font.init()
         self.num_font = font.Font('./assets/m12.ttf', 16)
 
         self.flag_img = image.load("./assets/flag.png")

@@ -35,7 +35,7 @@ class Game:
         self.handle_events()
         self.states_stack[-1].update()
 
-        if (len(self.states_stack) and self.states_stack[-1].is_acitve):
+        if len(self.states_stack) and self.states_stack[-1].is_acitve:
             self.states_stack[-1].update()
         else:
             self.states_stack.pop()

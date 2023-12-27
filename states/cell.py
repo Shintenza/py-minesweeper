@@ -1,3 +1,4 @@
+from pygame.font import Font
 from .cell_type import CellType
 from pygame import Rect, Surface, draw
 
@@ -13,10 +14,24 @@ class Cell:
     CELL_SIZE = 40
     OFFSET = 2
 
-    def __init__(self, index: int, type: CellType = CellType.UNCHECKED):
+    def __init__(self, index: int, is_trap = False):
         self._index = index
-        self._type = type
+        self._type = CellType.UNCHECKED
         self._rect = None
+        self._is_trap = is_trap
+        self._bomb_count = 0
+
+    @property
+    def bomb_count(self):
+        return self._bomb_count
+
+    @bomb_count.setter
+    def bomb_count(self, new_value: int):
+        self._bomb_count = new_value
+
+    @property
+    def is_trap(self):
+        return self._is_trap
 
     @property
     def index(self):
@@ -54,7 +69,13 @@ class Cell:
         screen.blit(flag_img, flag_rect)
 
     @classmethod
-    def draw_checked_cell(cls, screen, left, top, width):
+    def draw_bomb_cell(cls, screen: Surface, bomb_img: Surface, left, top, width):
+        cls.draw_checked_cell(screen, None, 0, left, top, width)
+        bomb_rect = bomb_img.get_rect(center=(left + width // 2, top + width // 2))
+        screen.blit(bomb_img, bomb_rect)
+
+    @classmethod
+    def draw_checked_cell(cls, screen, font, b_count, left, top, width):
         bg_rect = Rect(left, top, width, width)
         top_rect = Rect(
             left + cls.OFFSET,
@@ -63,5 +84,12 @@ class Cell:
             width - 2 * cls.OFFSET,
         )
 
+
         draw.rect(screen, cls.CELL_COLOR_4, bg_rect)
         draw.rect(screen, cls.CELL_COLOR_5, top_rect)
+
+        if b_count > 0:
+            text = f"{b_count}"
+            text_surf = font.render(text, True, (255, 255, 255))
+            text_rect = text_surf.get_rect(center=(left + width // 2, top + width // 2))
+            screen.blit(text_surf, text_rect)

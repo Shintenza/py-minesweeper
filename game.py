@@ -12,7 +12,7 @@ class Game:
         self.is_finished = False
 
         self.clock = pygame.time.Clock()
-        self.states_stack.append(GameState(self.screen, 10, 15))
+        self.states_stack.append(GameState(10, 15))
 
     def play(self):
         pygame.init()
@@ -20,7 +20,7 @@ class Game:
         while not self.is_finished:
             self.render()
             self.update()
-
+            self.clock.tick(self.FPS)
         pygame.quit()
 
     def handle_events(self):
@@ -37,7 +37,7 @@ class Game:
             if not self.states_stack[-1].is_acitve:
                 self.states_stack.pop()
                 return
-            self.states_stack[-1].update()
+            self.states_stack[-1].update(self.FPS)
 
     def render(self):
         self.screen.fill((0, 0, 0))
@@ -45,9 +45,7 @@ class Game:
             self.is_finished = True
             return
         self.states_stack[-1].render()
-
         pygame.display.flip()
-        self.clock.tick(self.FPS)
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ import random
 
 class Board:
     GAP_SIZE = 1
+    BOARD_PADDING = 10
     def __init__(self, left: int, top: int, width: int, height: int, bombs_number: int):
         self.width = width
         self.height = height
@@ -124,7 +125,7 @@ class Board:
 
             if (
                 current_cell.type == CellType.UNCHECKED
-                and not current_cell.is_trap
+                # and not current_cell.is_trap
             ):
                 Cell.draw_unchecked_cell(screen, rect_x, rect_y, Cell.CELL_SIZE)
             if current_cell.type == CellType.CHECKED:

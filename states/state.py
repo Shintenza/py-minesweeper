@@ -21,7 +21,7 @@ class State(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def update(self):
+    def update(self, fps):
         pass
 
     @abc.abstractmethod

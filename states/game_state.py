@@ -6,26 +6,58 @@ from .cell_type import CellType
 
 
 class GameState(State):
-    def __init__(self, screen, width, height, bombs_number=20):
+    DISPLAY_SIZE = 2
+
+    def __init__(self, width, height, bombs_number=20):
         self.width = width
         self.height = height
-        self.board_top = 0
-        self.board_left = 0
+        self.board_top = self.DISPLAY_SIZE * Cell.CELL_SIZE
+        self.board_left = Board.BOARD_PADDING
         self.bombs_number = bombs_number
 
         self.load_fonts()
 
         self.init_game()
+        self.init_layout()
+        self.flag_img = pygame.image.load("./assets/flag.png")
+        img_size = round(Cell.CELL_SIZE * 1)
+        self.flag_img = pygame.transform.scale(self.flag_img, (img_size, img_size))
+        self.clock = 0;
+        self.clock_msg = "";
 
-        screen = pygame.display.set_mode(
-            (width * Cell.CELL_SIZE, height * Cell.CELL_SIZE)
+
+
+    def init_layout(self):
+        screen_width = 2 * Board.BOARD_PADDING + self.width * Cell.CELL_SIZE
+        screen_height = (
+            self.DISPLAY_SIZE * Cell.CELL_SIZE
+            + self.height * Cell.CELL_SIZE
+            + Board.BOARD_PADDING
+        )
+        self.bg_rect = pygame.Rect(0, 0, screen_width, screen_height)
+        self.flags_rect = pygame.Rect(
+            Board.BOARD_PADDING,
+            Board.BOARD_PADDING,
+            4 * Cell.CELL_SIZE,
+            self.DISPLAY_SIZE * Cell.CELL_SIZE - 2 * Board.BOARD_PADDING,
         )
 
-        super().__init__(screen)
+        self.time_rect = pygame.Rect(
+            screen_width - 4 * Cell.CELL_SIZE - Board.BOARD_PADDING,
+            Board.BOARD_PADDING,
+            4 * Cell.CELL_SIZE,
+            self.DISPLAY_SIZE * Cell.CELL_SIZE - 2 * Board.BOARD_PADDING
+        )
+
+        super().__init__(pygame.display.set_mode((screen_width, screen_height)))
 
     def init_game(self):
         self.game_board = Board(
-            self.board_left, self.board_top, self.width, self.height, self.bombs_number
+            self.board_left,
+            self.board_top,
+            self.width,
+            self.height,
+            self.bombs_number,
         )
         self.is_win = False
         self.valid_matches = 0
@@ -34,8 +66,10 @@ class GameState(State):
 
     def load_fonts(self):
         pygame.font.init()
-        self.header_font = pygame.font.Font("./assets/m12.ttf", 31)
-        self.subheader_font = pygame.font.Font("./assets/m12.ttf", 16)
+        font_location = "./assets/m12.ttf"
+        self.header_font = pygame.font.Font(font_location, 31)
+        self.subheader_font = pygame.font.Font(font_location, 16)
+        self.left_flags_font = pygame.font.Font(font_location, 20)
 
     def get_clicked_rect_index(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -150,10 +184,34 @@ class GameState(State):
             elif event.key == pygame.K_q and (self.is_win or self.is_game_over):
                 self.end_state()
 
-    def update(self):
-        pass
+    def draw_flags_left(self):
+        msg = f"{self.left_flags}" 
+        flags_txt_surf = self.left_flags_font.render(msg, True, (255, 255, 255))
+        offset = (flags_txt_surf.get_width() + self.flag_img.get_width()) // 2
+
+        flag_rect = self.flag_img.get_rect(x=self.flags_rect.centerx - offset, y=self.flags_rect.centery - self.flag_img.get_height()//2)
+        flags_txt_rect = flags_txt_surf.get_rect(x=flag_rect.x + flag_rect.width, y=self.flags_rect.centery - flags_txt_surf.get_height() //2)
+
+        self.screen.blit(self.flag_img, flag_rect)
+        self.screen.blit(flags_txt_surf, flags_txt_rect)
+
+    def draw_clock(self):
+        msg_surf = self.left_flags_font.render(self.clock_msg, True, (255, 255, 255))
+        msg_rect = msg_surf.get_rect(center=(self.time_rect.center))
+        self.screen.blit(msg_surf, msg_rect)
+
+    def update(self, fps):
+        if not (self.is_win or self.is_game_over):
+            self.clock+=1
+            self.clock_msg = f"{self.clock//fps}"
 
     def render(self):
+        pygame.draw.rect(self.screen, (32, 32, 32), self.bg_rect)
+        pygame.draw.rect(self.screen, Cell.CELL_COLOR_3, self.flags_rect)
+        pygame.draw.rect(self.screen, Cell.CELL_COLOR_3, self.time_rect)
+        self.draw_flags_left()
+        self.draw_clock()
+
         self.game_board.draw_board(self.screen)
         if self.is_win:
             self.show_ending_msg("You have won")

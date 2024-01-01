@@ -1,6 +1,7 @@
 import pygame
 from .state import State
 from .board import Board
+from .difficulty import Difficulty
 from .cell import Cell
 from .cell_type import CellType
 
@@ -8,12 +9,10 @@ from .cell_type import CellType
 class GameState(State):
     DISPLAY_SIZE = 2
 
-    def __init__(self, width, height, bombs_number=20):
-        self.width = width
-        self.height = height
+    def __init__(self, diffculty: Difficulty):
+        self.init_board_details(diffculty)
         self.board_top = self.DISPLAY_SIZE * Cell.CELL_SIZE
         self.board_left = Board.BOARD_PADDING
-        self.bombs_number = bombs_number
 
         self.load_fonts()
 
@@ -22,10 +21,22 @@ class GameState(State):
         self.flag_img = pygame.image.load("./assets/flag.png")
         img_size = round(Cell.CELL_SIZE * 1)
         self.flag_img = pygame.transform.scale(self.flag_img, (img_size, img_size))
-        self.clock = 0;
-        self.clock_msg = "";
+        self.clock = 0
+        self.clock_msg = ""
 
-
+    def init_board_details(self, diffculty: Difficulty):
+        if diffculty == Difficulty.EASY:
+            self.width = 10
+            self.height = 12
+            self.bombs_number = 10
+        elif diffculty == Difficulty.MEDIUM:
+            self.width = 16
+            self.height = 20
+            self.bombs_number = 45
+        else:
+            self.width = 30
+            self.height = 20
+            self.bombs_number = 99
 
     def init_layout(self):
         screen_width = 2 * Board.BOARD_PADDING + self.width * Cell.CELL_SIZE
@@ -46,7 +57,7 @@ class GameState(State):
             screen_width - 4 * Cell.CELL_SIZE - Board.BOARD_PADDING,
             Board.BOARD_PADDING,
             4 * Cell.CELL_SIZE,
-            self.DISPLAY_SIZE * Cell.CELL_SIZE - 2 * Board.BOARD_PADDING
+            self.DISPLAY_SIZE * Cell.CELL_SIZE - 2 * Board.BOARD_PADDING,
         )
 
         super().__init__(pygame.display.set_mode((screen_width, screen_height)))
@@ -65,7 +76,6 @@ class GameState(State):
         self.left_flags = self.bombs_number
 
     def load_fonts(self):
-        pygame.font.init()
         font_location = "./assets/m12.ttf"
         self.header_font = pygame.font.Font(font_location, 31)
         self.subheader_font = pygame.font.Font(font_location, 16)
@@ -185,12 +195,18 @@ class GameState(State):
                 self.end_state()
 
     def draw_flags_left(self):
-        msg = f"{self.left_flags}" 
+        msg = f"{self.left_flags}"
         flags_txt_surf = self.left_flags_font.render(msg, True, (255, 255, 255))
         offset = (flags_txt_surf.get_width() + self.flag_img.get_width()) // 2
 
-        flag_rect = self.flag_img.get_rect(x=self.flags_rect.centerx - offset, y=self.flags_rect.centery - self.flag_img.get_height()//2)
-        flags_txt_rect = flags_txt_surf.get_rect(x=flag_rect.x + flag_rect.width, y=self.flags_rect.centery - flags_txt_surf.get_height() //2)
+        flag_rect = self.flag_img.get_rect(
+            x=self.flags_rect.centerx - offset,
+            y=self.flags_rect.centery - self.flag_img.get_height() // 2,
+        )
+        flags_txt_rect = flags_txt_surf.get_rect(
+            x=flag_rect.x + flag_rect.width,
+            y=self.flags_rect.centery - flags_txt_surf.get_height() // 2,
+        )
 
         self.screen.blit(self.flag_img, flag_rect)
         self.screen.blit(flags_txt_surf, flags_txt_rect)
@@ -202,7 +218,7 @@ class GameState(State):
 
     def update(self, fps):
         if not (self.is_win or self.is_game_over):
-            self.clock+=1
+            self.clock += 1
             self.clock_msg = f"{self.clock//fps}"
 
     def render(self):

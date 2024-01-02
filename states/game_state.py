@@ -21,7 +21,6 @@ class GameState(State):
         self.flag_img = pygame.image.load("./assets/flag.png")
         img_size = round(Cell.CELL_SIZE * 1)
         self.flag_img = pygame.transform.scale(self.flag_img, (img_size, img_size))
-        self.clock = 0
         self.clock_msg = ""
 
     def init_board_details(self, diffculty: Difficulty):
@@ -74,6 +73,7 @@ class GameState(State):
         self.valid_matches = 0
         self.is_game_over = False
         self.left_flags = self.bombs_number
+        self.clock = 0
 
     def load_fonts(self):
         font_location = "./assets/m12.ttf"

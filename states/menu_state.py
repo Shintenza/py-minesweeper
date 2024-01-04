@@ -99,7 +99,7 @@ class MenuState(State):
                 self.difficulty_lvl = Difficulty((self.difficulty_lvl.value + 1))
             if self.start_btn.collidepoint(mouse_pos):
                 self._next_state = GameState(self.difficulty_lvl)
-            if self.quit_rect.collidepoint(mouse_pos):
+            if self.quit_btn.collidepoint(mouse_pos):
                 self.end_state()
 
     def update(self, fps):

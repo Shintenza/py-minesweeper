@@ -27,6 +27,9 @@ class State(abc.ABC):
     @abc.abstractmethod
     def handle_events(self, event: Event):
         pass
+    @abc.abstractmethod
+    def set_screen(self):
+        pass
 
     @abc.abstractmethod
     def update(self, fps):

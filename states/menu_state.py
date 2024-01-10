@@ -9,15 +9,17 @@ import pygame
 
 class MenuState(State):
     def __init__(self):
-        screen = pygame.display.set_mode((400, 600))
-        super().__init__(screen)
-
+        self.set_screen()
         font_location = "./assets/m12.ttf"
 
         self.title_font = pygame.font.Font(font_location, 30)
         self.regualr_font = pygame.font.Font(font_location, 15)
         self.difficulty_lvl: Difficulty = Difficulty.EASY
         self.init_layout()
+
+    def set_screen(self):
+        screen = pygame.display.set_mode((400, 600))
+        super().__init__(screen)
 
     def init_layout(self):
         title_text = "Minesweeper"

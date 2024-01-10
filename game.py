@@ -8,13 +8,11 @@ class Game:
     FPS = 60
 
     def __init__(self):
-        self.screen = pygame.display.set_mode((800, 600))
         self.states_stack: list[State] = []
         self.is_finished = False
         pygame.font.init()
 
         self.clock = pygame.time.Clock()
-        # self.states_stack.append(GameState(10, 15))
         self.states_stack.append(MenuState())
 
     def play(self):
@@ -39,6 +37,8 @@ class Game:
         if len(self.states_stack) > 0:
             if not self.states_stack[-1].is_acitve:
                 self.states_stack.pop()
+                if len(self.states_stack) > 0:
+                    self.states_stack[-1].set_screen()
                 return
             if self.states_stack[-1].next_state:
                 state_to_append = self.states_stack[-1].next_state
@@ -48,7 +48,6 @@ class Game:
             self.states_stack[-1].update(self.FPS)
 
     def render(self):
-        self.screen.fill((0, 0, 0))
         if len(self.states_stack) == 0:
             self.is_finished = True
             return

@@ -17,11 +17,22 @@ class GameState(State):
         self.load_fonts()
 
         self.init_game()
+        self.set_screen()
         self.init_layout()
         self.flag_img = pygame.image.load("./assets/flag.png")
         img_size = round(Cell.CELL_SIZE * 1)
         self.flag_img = pygame.transform.scale(self.flag_img, (img_size, img_size))
         self.clock_msg = ""
+
+    def set_screen(self):
+        screen_width = 2 * Board.BOARD_PADDING + self.width * Cell.CELL_SIZE
+        screen_height = (
+            self.DISPLAY_SIZE * Cell.CELL_SIZE
+            + self.height * Cell.CELL_SIZE
+            + Board.BOARD_PADDING
+        )
+        super().__init__(pygame.display.set_mode((screen_width, screen_height)))
+
 
     def init_board_details(self, diffculty: Difficulty):
         if diffculty == Difficulty.EASY:
@@ -38,12 +49,9 @@ class GameState(State):
             self.bombs_number = 99
 
     def init_layout(self):
-        screen_width = 2 * Board.BOARD_PADDING + self.width * Cell.CELL_SIZE
-        screen_height = (
-            self.DISPLAY_SIZE * Cell.CELL_SIZE
-            + self.height * Cell.CELL_SIZE
-            + Board.BOARD_PADDING
-        )
+        screen_width = self.screen.get_width()
+        screen_height = self.screen.get_height()
+
         self.bg_rect = pygame.Rect(0, 0, screen_width, screen_height)
         self.flags_rect = pygame.Rect(
             Board.BOARD_PADDING,
@@ -59,7 +67,6 @@ class GameState(State):
             self.DISPLAY_SIZE * Cell.CELL_SIZE - 2 * Board.BOARD_PADDING,
         )
 
-        super().__init__(pygame.display.set_mode((screen_width, screen_height)))
 
     def init_game(self):
         self.game_board = Board(

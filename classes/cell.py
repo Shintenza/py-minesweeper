@@ -1,5 +1,4 @@
-from pygame.font import Font
-from .cell_type import CellType
+from enums.cell_type import CellType
 from pygame import Rect, Surface, draw
 
 

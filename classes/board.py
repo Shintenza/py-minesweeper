@@ -1,8 +1,8 @@
 from typing import List
 
 from pygame import Surface, image, transform, font
-from .cell import Cell
-from .cell_type import CellType
+from classes.cell import Cell
+from enums.cell_type import CellType
 import random
 
 

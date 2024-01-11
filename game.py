@@ -1,8 +1,6 @@
 import pygame
 from states.menu_state import MenuState
 from states.state import State
-from states.game_state import GameState
-
 
 class Game:
     FPS = 60

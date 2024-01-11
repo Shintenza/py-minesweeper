@@ -1,9 +1,9 @@
 import pygame
 from .state import State
-from .board import Board
-from .difficulty import Difficulty
-from .cell import Cell
-from .cell_type import CellType
+from classes.board import Board
+from enums.difficulty import Difficulty
+from classes.cell import Cell
+from enums.cell_type import CellType
 
 
 class GameState(State):

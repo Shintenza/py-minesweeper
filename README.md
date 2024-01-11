@@ -5,15 +5,23 @@ with [pygame](https://www.pygame.org) library. It offers refreshed UI and three 
 # Requirements 
 -  you have to have at least `Python 3.8` version (I am using `Assignment Expressions`)
 - `pygame` (tested on version `2.5.2`)
-> pip install pygame 
+```sh 
+pip install pygame
+```
 
 # Getting started
 1. clone this repository:
-> git clone https://github.com/Shintenza/py-minesweeper
+```sh
+git clone https://github.com/Shintenza/py-minesweeper
+```
 2. navigate to the cloned directory:
-> cd py-minesweeper
+```sh
+cd py-minesweeper
+```
 3. start playing (i assume that your Linux distro uses python3 by default):
-> python game.py
+```sh
+python game.py
+```
 
 # Licence
 This project is licensed under the GPL3 License - see the LICENSE.md file for details

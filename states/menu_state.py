@@ -2,7 +2,7 @@ from pygame.event import Event
 
 from states.game_state import GameState
 
-from .difficulty import Difficulty
+from enums.difficulty import Difficulty
 from .state import State
 import pygame
 

@@ -8,6 +8,8 @@ import pygame
 
 
 class MenuState(State):
+    "State responsible for displaying main menu and switching difficulty of the game"
+
     def __init__(self):
         self.set_screen()
         font_location = "./assets/m12.ttf"

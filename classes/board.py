@@ -7,8 +7,10 @@ import random
 
 
 class Board:
+    "manages the game board consisting of cells and draws them"
     GAP_SIZE = 1
     BOARD_PADDING = 10
+
     def __init__(self, left: int, top: int, width: int, height: int, bombs_number: int):
         self.width = width
         self.height = height
@@ -19,7 +21,6 @@ class Board:
         self.load_assets()
         self.init_board()
         self.numerate_board()
-
 
     def init_board(self):
         self.bomb_positions = random.sample(
@@ -34,13 +35,13 @@ class Board:
                 self.board.append(Cell(i))
 
     def load_assets(self):
-        self.num_font = font.Font('./assets/m12.ttf', 16)
+        self.num_font = font.Font("./assets/m12.ttf", 16)
 
         self.flag_img = image.load("./assets/flag.png")
         img_size = round(Cell.CELL_SIZE * 0.75)
         self.flag_img = transform.scale(self.flag_img, (img_size, img_size))
 
-        self.bomb_img = image.load('./assets/bomb.png')
+        self.bomb_img = image.load("./assets/bomb.png")
         self.bomb_img = transform.scale(self.bomb_img, (img_size, img_size))
 
     def reveal_bombs(self):
@@ -112,8 +113,6 @@ class Board:
             return None
         return self.board[cell.index - self.width - 1]
 
-
-
     def draw_board(self, screen: Surface):
         for i in range(self.width * self.height):
             current_cell = self.board[i]
@@ -124,16 +123,25 @@ class Board:
             rect_y = self.top + row * Cell.CELL_SIZE
 
             if (
-                current_cell.type == CellType.UNCHECKED
+                current_cell.type
+                == CellType.UNCHECKED
                 # and not current_cell.is_trap
             ):
                 Cell.draw_unchecked_cell(screen, rect_x, rect_y, Cell.CELL_SIZE)
             if current_cell.type == CellType.CHECKED:
                 if current_cell.is_trap:
-                    Cell.draw_bomb_cell(screen, self.bomb_img, rect_x, rect_y, Cell.CELL_SIZE)
+                    Cell.draw_bomb_cell(
+                        screen, self.bomb_img, rect_x, rect_y, Cell.CELL_SIZE
+                    )
                 else:
-                    Cell.draw_checked_cell(screen, self.num_font, current_cell.bomb_count, rect_x, rect_y, Cell.CELL_SIZE)
-
+                    Cell.draw_checked_cell(
+                        screen,
+                        self.num_font,
+                        current_cell.bomb_count,
+                        rect_x,
+                        rect_y,
+                        Cell.CELL_SIZE,
+                    )
 
             if current_cell.type == CellType.FLAGGED:
                 Cell.draw_flagged_cell(

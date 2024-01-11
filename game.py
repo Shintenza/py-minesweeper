@@ -2,7 +2,15 @@ import pygame
 from states.menu_state import MenuState
 from states.state import State
 
+
 class Game:
+    """Main class handling states switching, rendering and updates. States are 
+    held in stack (or rather python list) to quickly jump between them.
+    In the project menu state is always the first element of the stack, game 
+    itself is pushed after clicking the play button. When we want to go back to
+    the main menu we just pop the game state from the stack. When stack is
+    empty application closes"""
+
     FPS = 60
 
     def __init__(self):

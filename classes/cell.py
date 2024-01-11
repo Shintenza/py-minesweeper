@@ -3,6 +3,9 @@ from pygame import Rect, Surface, draw
 
 
 class Cell:
+    """single cell later held in a array of cells in Board class. Implements 
+    static methods that renders cell at given position and state."""
+
     CELL_COLOR_1 = (111, 86, 83)
     CELL_COLOR_2 = (24, 24, 24)
     CELL_COLOR_3 = (51, 51, 51)
@@ -13,7 +16,7 @@ class Cell:
     CELL_SIZE = 40
     OFFSET = 2
 
-    def __init__(self, index: int, is_trap = False):
+    def __init__(self, index: int, is_trap=False):
         self._index = index
         self._type = CellType.UNCHECKED
         self._rect = None
@@ -82,7 +85,6 @@ class Cell:
             width - 2 * cls.OFFSET,
             width - 2 * cls.OFFSET,
         )
-
 
         draw.rect(screen, cls.CELL_COLOR_4, bg_rect)
         draw.rect(screen, cls.CELL_COLOR_5, top_rect)

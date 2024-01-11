@@ -5,6 +5,7 @@ from pygame.event import Event
 
 
 class State(abc.ABC):
+    """Represent single state of the game like menu, game itself"""
     def __init__(self, screen: Surface):
         self._is_acitve = True
         self.screen = screen
@@ -27,6 +28,7 @@ class State(abc.ABC):
     @abc.abstractmethod
     def handle_events(self, event: Event):
         pass
+
     @abc.abstractmethod
     def set_screen(self):
         pass

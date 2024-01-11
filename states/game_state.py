@@ -7,6 +7,7 @@ from enums.cell_type import CellType
 
 
 class GameState(State):
+    "State implementing logic of the game and its proper displaying."
     DISPLAY_SIZE = 2
 
     def __init__(self, diffculty: Difficulty):
@@ -32,7 +33,6 @@ class GameState(State):
             + Board.BOARD_PADDING
         )
         super().__init__(pygame.display.set_mode((screen_width, screen_height)))
-
 
     def init_board_details(self, diffculty: Difficulty):
         if diffculty == Difficulty.EASY:
@@ -66,7 +66,6 @@ class GameState(State):
             4 * Cell.CELL_SIZE,
             self.DISPLAY_SIZE * Cell.CELL_SIZE - 2 * Board.BOARD_PADDING,
         )
-
 
     def init_game(self):
         self.game_board = Board(

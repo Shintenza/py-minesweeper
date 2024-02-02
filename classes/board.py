@@ -54,22 +54,23 @@ class Board:
         for i in range(len(self.board)):
             current_cell = self.board[i]
 
-            if (c := self.get_n_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
-            if (c := self.get_ne_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
-            if (c := self.get_e_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
-            if (c := self.get_se_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
-            if (c := self.get_s_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
-            if (c := self.get_sw_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
-            if (c := self.get_w_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
-            if (c := self.get_nw_neighbour(current_cell)) and c.is_trap:
-                current_cell.bomb_count += 1
+            for visitor in self.get_visitors():
+                neighbour = visitor(current_cell)
+                if neighbour and neighbour.is_trap:
+                    current_cell.bomb_count += 1
+
+    def get_visitors(self):
+        visitors = [
+            self.get_n_neighbour,
+            self.get_ne_neighbour,
+            self.get_e_neighbour,
+            self.get_se_neighbour,
+            self.get_s_neighbour,
+            self.get_sw_neighbour,
+            self.get_w_neighbour,
+            self.get_nw_neighbour,
+        ]
+        return visitors
 
     def get_n_neighbour(self, cell: Cell):
         if cell.index < self.width:

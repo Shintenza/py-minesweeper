@@ -123,22 +123,10 @@ class GameState(State):
             self.visit_neighbours(cell_index)
 
     def visit_neighbours(self, cell_index):
-        if c := self.game_board.get_n_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
-        if c := self.game_board.get_ne_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
-        if c := self.game_board.get_e_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
-        if c := self.game_board.get_se_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
-        if c := self.game_board.get_s_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
-        if c := self.game_board.get_sw_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
-        if c := self.game_board.get_w_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
-        if c := self.game_board.get_nw_neighbour(self.game_board.board[cell_index]):
-            self.visit_cell(c.index)
+        for visitor in self.game_board.get_visitors():
+            neighbour = visitor(self.game_board.board[cell_index])
+            if neighbour:
+                self.visit_cell(neighbour.index)
 
     def mark_cell(self, cell_index):
         if cell_index < 0 or cell_index > self.width * self.height:
